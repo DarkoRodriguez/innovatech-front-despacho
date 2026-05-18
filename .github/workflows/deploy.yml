@@ -31,29 +31,8 @@ jobs:
         docker push $ECR_REPO_URL:$IMAGE_TAG
 
     - name: Desplegar en EC2 via AWS SSM
-      uses: aws-actions/aws-ssm-send-command@v1
-      with:
-        instance-ids: ${{ secrets.EC2_FRONTEND_INSTANCE_ID }}
-        document-name: AWS-RunShellScript
-        parameters: |
-          commands:
-            - "aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}"
-            - "docker pull ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest"
-            - "mkdir -p /app/frontend && cd /app/frontend"
-            - "cat << 'EOF' > docker-compose.yml"
-            - "version: '3.8'"
-            - "services:"
-            - "  front-despacho:"
-            - "    container_name: front-despacho"
-            - "    image: ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest"
-            - "    ports:"
-            - "      - \"80:80\""
-            - "    restart: unless-stopped"
-            - "    networks:"
-            - "      - innovatech-public-net"
-            - "networks:"
-            - "  innovatech-public-net:"
-            - "    driver: bridge"
-            - "EOF"
-            - "docker compose down || true"
-            - "docker compose up -d"
+      run: |
+        aws ssm send-command \
+          --instance-ids "${{ secrets.EC2_FRONTEND_INSTANCE_ID }}" \
+          --document-name "AWS-RunShellScript" \
+          --parameters '{"commands":["aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}", "docker pull ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest", "docker stop front-despacho || true", "docker rm front-despacho || true", "docker run -d -p 80:80 --name front-despacho --restart unless-stopped ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest"]}'

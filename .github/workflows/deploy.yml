@@ -35,4 +35,4 @@ jobs:
         aws ssm send-command \
           --instance-ids "${{ secrets.EC2_FRONTEND_INSTANCE_ID }}" \
           --document-name "AWS-RunShellScript" \
-          --parameters '{"commands":["aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}", "docker pull ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest", "docker stop front-despacho || true", "docker rm front-despacho || true", "docker run -d -p 80:80 --name front-despacho --restart unless-stopped ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest"]}'
+          --parameters '{"commands":["aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}", "docker pull ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest", "docker stop front-despacho || true", "docker rm front-despacho || true", "docker run -d -p 80:80 --name front-despacho -e VENTAS_IP=${{ secrets.VENTAS_IP }} -e DESPACHOS_IP=${{ secrets.DESPACHOS_IP }} --restart unless-stopped ${{ secrets.ECR_REPO_URL_FRONTEND }}:latest"]}'

@@ -12,9 +12,14 @@ FROM nginx:1.25-alpine
 # Copiar archivos compilados estáticos al directorio de Nginx
 COPY --from=build /app/dist /usr/share/nginx/html
 
+# Copiar la plantilla de configuración de Nginx
+COPY default.conf.template /etc/nginx/templates/default.conf.template
+
 # Ajustar permisos para que Nginx corra en un entorno no-root (Seguridad corporativa)
+# Ademas dar permisos a /etc/nginx/conf.d para que envsubst pueda escribir ahí
 RUN touch /var/run/nginx.pid && \
-    chown -R 101:101 /var/run/nginx.pid /var/cache/nginx /var/log/nginx
+    mkdir -p /etc/nginx/conf.d && \
+    chown -R 101:101 /var/run/nginx.pid /var/cache/nginx /var/log/nginx /etc/nginx/conf.d
 
 USER 101
 EXPOSE 80

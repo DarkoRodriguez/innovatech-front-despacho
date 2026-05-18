@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  front-despacho:
+    container_name: front-despacho
+    image: ${AWS_REGISTRY}/innovatech-front-despacho:latest
+    ports:
+      - "80:80"
+    restart: unless-stopped
+    networks:
+      - innovatech-public-net
+
+networks:
+  innovatech-public-net:
+    driver: bridge

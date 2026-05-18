@@ -37,3 +37,23 @@ Este repositorio cuenta con un pipeline automatizado en **GitHub Actions**. Al h
 2. Construye la imagen Docker (`innovatech-front-despacho`).
 3. Sube la imagen a AWS ECR.
 4. Ejecuta comandos de forma segura en la instancia EC2 utilizando **AWS Systems Manager (SSM)** para descargar la nueva imagen y reiniciar el contenedor de forma automática con zero-downtime, sin necesidad de abrir puertos SSH.
+
+## 📡 Comunicación con Backends
+- **Endpoints consumidos:** El frontend consume principalmente los endpoints de `ventas` y `despachos`, por ejemplo `/api/v1/ventas` y `/api/v1/despachos`.
+- **Reverse Proxy y CORS:** En producción NGINX actúa como reverse proxy, reenviando `/api` hacia los backends y evitando problemas de CORS. Para desarrollo local puede apuntar directamente a `http://localhost:8080` u otro host según la variable de entorno.
+- **Variables de entorno importantes:** `VENTAS_HOST`, `DESPACHOS_HOST`, `API_BASE_URL` (usadas por `Axios` o la configuración de NGINX). Asegúrese de configurar `default.conf.template` con los valores correctos antes de construir la imagen.
+
+## 🔌 Modo de desarrollo y despliegue
+- Desarrollo sin Docker:
+   ```bash
+   npm install
+   npm run dev
+   ```
+- Para producción con Docker Compose:
+   ```bash
+   docker compose up -d --build front-despacho
+   ```
+
+## ✅ Puntos importantes
+- Mantenga actualizadas las rutas del proxy en `default.conf.template` y actualice `db.json` sólo si usa el mock local.
+- Documente cualquier cambio en los endpoints HTTP en los README de los backends para evitar desajustes entre front y back.

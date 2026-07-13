@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://qic534o8o0.execute-api.us-east-1.amazonaws.com',
+        target: 'http://frontend-service.innovatech.svc.cluster.local',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        // rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   }

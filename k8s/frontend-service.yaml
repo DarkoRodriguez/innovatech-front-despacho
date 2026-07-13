@@ -3,6 +3,11 @@ kind: Service
 metadata:
   name: frontend-service
   namespace: innovatech
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "nlb"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internet-facing"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "instance"
+    service.beta.kubernetes.io/aws-load-balancer-subnets: "subnet-0b2e68ebbd9f06fe6,subnet-061d5eb5328e00352"
 spec:
   type: LoadBalancer
   selector:
